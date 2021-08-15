@@ -1,19 +1,17 @@
-import { Model, UpdateQuery } from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { ToDo, TodoModel,TodoDocument } from './schemas/todo.schema';
-import { UpdateTodoDto } from './dto/update-todo.dto';
+import { TodoRepository } from './todo.repository';
+import { ToDo, TodoDocument } from './schemas/todo.schema';
 
 @Injectable()
 export class TodoService {
 
     constructor(
-        @InjectModel(TodoModel.name) private todoModel: Model<ToDo>
+        private readonly todoRepository: TodoRepository
     ){}
 
     async fetchTodo(id:string){
         try{
-            let todo:ToDo = await this.todoModel.findOne({_id:id});
+            let todo:ToDo = await this.todoRepository.findOne({_id:id});
             return {id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete};
         }catch(err){
             throw err;
@@ -22,7 +20,7 @@ export class TodoService {
 
     async fetchTodos(): Promise<ToDo[]> {
         try{
-            let todos:TodoDocument[] = await this.todoModel.find({});
+            let todos:ToDo[] = await this.todoRepository.find({});
             let response:ToDo[] = todos.map((todo:TodoDocument)=><ToDo>{id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete});
             return response;
         }catch(err){
@@ -31,14 +29,13 @@ export class TodoService {
     }
 
     async createTodo(title:string, description:string, isComplete:boolean){
-        try{    
-            let todo = new this.todoModel({title,description,isComplete});
-            let saved:ToDo =  await todo.save();
+        try{
+            let todo = await this.todoRepository.create({title,description,isComplete});
             return {
-                id:saved.id,
-                title:saved.title,
-                description:saved.description,
-                isComplete:saved.isComplete
+                id:todo.id,
+                title:todo.title,
+                description:todo.description,
+                isComplete:todo.isComplete
             };   
         }catch(err){
             throw err;
@@ -47,7 +44,7 @@ export class TodoService {
 
     async deleteTodo(id:string){
         try{
-            let response = await this.todoModel.deleteOne({_id:id})
+            let response = await this.todoRepository.deleteOne({_id:id})
             return response;
         }catch(err){
             throw err;
@@ -56,7 +53,7 @@ export class TodoService {
 
     async updateTodo(id:string,updateTodoDto:Partial<ToDo>){
         try{
-            let response = await this.todoModel.findOneAndUpdate({_id:id},updateTodoDto,{new:true});
+            let response = await this.todoRepository.findAndUpdate({_id:id},updateTodoDto);
             return response;
         }catch(err){
             throw err;

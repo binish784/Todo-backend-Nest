@@ -6,7 +6,7 @@ export type TodoDocument = TodoModel & Document;
 
 @Schema()
 export class TodoModel {
-  @Prop()
+  @Prop({required:true})
   title: string;
 
   @Prop()

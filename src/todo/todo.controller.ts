@@ -45,6 +45,9 @@ export class TodoController{
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
+            
+            if(!createTodoDto.title) throw Error("Title is required");
+            
             let todo = await this.todoService.createTodo(
                 createTodoDto.title,
                 createTodoDto.description,
@@ -53,7 +56,8 @@ export class TodoController{
             payload = {success:true, data:todo, message:"Todo Created"};
         }catch(err){
             console.log(err);
-            payload = {success:false, data:null, message:"Failed to create todo"};
+            let msg:string = err.message || "Failed to create todo";
+            payload = {success:false, data:null, message:msg};
         }
         return payload;
     }    
