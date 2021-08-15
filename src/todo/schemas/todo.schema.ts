@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 export type TodoDocument = TodoModel & Document;
 
@@ -15,7 +16,7 @@ export class TodoModel {
   isComplete: boolean;
 }
 
-export interface ToDo extends TodoDocument{
+export interface ToDo extends mongoose.Document{
   id:string,
   title:string,
   description:string,
