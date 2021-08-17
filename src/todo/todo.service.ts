@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TodoRepository } from './todo.repository';
-import { ToDo, TodoDocument } from './schemas/todo.schema';
+import { TodoModel, TodoDocument } from './schemas/todo.schema';
 
 @Injectable()
 export class TodoService {
@@ -11,17 +11,17 @@ export class TodoService {
 
     async fetchTodo(id:string){
         try{
-            let todo:ToDo = await this.todoRepository.findOne({_id:id});
+            let todo:TodoDocument = await this.todoRepository.findOne({_id:id});
             return {id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete};
         }catch(err){
             throw err;
         }
     }
 
-    async fetchTodos(): Promise<ToDo[]> {
+    async fetchTodos(): Promise<TodoDocument[]> {
         try{
-            let todos:ToDo[] = await this.todoRepository.find({});
-            let response:ToDo[] = todos.map((todo:TodoDocument)=><ToDo>{id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete});
+            let todos:TodoDocument[] = await this.todoRepository.find({});
+            let response:TodoDocument[] = todos.map((todo:TodoDocument)=><TodoDocument>{id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete});
             return response;
         }catch(err){
             throw err;
@@ -44,14 +44,14 @@ export class TodoService {
 
     async deleteTodo(id:string){
         try{
-            let response = await this.todoRepository.deleteOne({_id:id})
-            return response;
+            let response = await this.todoRepository.deleteOne({_id:id});
+            return true;
         }catch(err){
             throw err;
         }
     }
 
-    async updateTodo(id:string,updateTodoDto:Partial<ToDo>){
+    async updateTodo(id:string,updateTodoDto:Partial<TodoDocument>){
         try{
             let response = await this.todoRepository.findAndUpdate({_id:id},updateTodoDto);
             return response;

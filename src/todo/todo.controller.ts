@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get ,Param,Patch,Post, Put } from "@nestjs/co
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
-import { ToDo } from "./schemas/todo.schema";
+import { TodoDocument } from "./schemas/todo.schema";
 import { TodoService } from "./todo.service";
 
 @Controller("todo")
@@ -84,7 +84,7 @@ export class TodoController{
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
-            let response:ToDo = await this.todoService.updateTodo(id,updateTodoDto);
+            let response:TodoDocument = await this.todoService.updateTodo(id,updateTodoDto);
             payload = {success:true,data:null,message:"Update Successful"}
         }catch(err){
             console.log(err);

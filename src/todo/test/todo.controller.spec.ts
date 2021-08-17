@@ -1,13 +1,17 @@
 import dbConfig from "../../config/database";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Test,TestingModule } from "@nestjs/testing";
-import { TodoModel, TodoSchema } from "../schemas/todo.schema";
+import { TodoDocument, TodoModel, TodoSchema } from "../schemas/todo.schema";
 import { TodoController } from "../todo.controller";
 import { TodoService } from "../todo.service";
 import { TodoRepository } from "../todo.repository";
+import { ApiResponse } from "src/types/response.type";
+
+jest.mock('../todo.service');
 
 describe('TodoController', () => {
     let todoController: TodoController;
+    let todoService : TodoService;
   
     beforeEach(async () => {
       const app: TestingModule = await Test.createTestingModule({
@@ -17,20 +21,25 @@ describe('TodoController', () => {
       }).compile();
   
       todoController = app.get<TodoController>(TodoController);
+      todoService = app.get<TodoService>(TodoService);
+      jest.clearAllMocks();
     });
   
-    describe('Testing Todo Controller', () => {
+    describe('getTodos', () => {
+      describe('when get todos is called', ()=>{
 
-        it('/todo GET - returns all todos',async ()=>{
-          let response = await todoController.getAll();
-    
-          expect(response.success).toBe(true);
-          if(response.success && response.data.length>0){
-            expect(response.message).toBe("Todos Listed");
-          }else{
-            expect(response.message).toBe("Todos Empty");
-          }
+        let response:ApiResponse;
+
+        beforeEach( async ()=>{
+          response = await todoController.getAll();
         })
+  
+        test('then it should call todoService',()=>{
+          expect(todoService.fetchTodos).toBeCalledWith()
+        })
+
+      
+      })
 
     });
 });
