@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable,  NotFoundException } from '@nestjs/common';
 import { TodoRepository } from './todo.repository';
 import { TodoModel, TodoDocument } from './schemas/todo.schema';
 import { Todo } from './entities/Todo.entity';
@@ -11,12 +11,14 @@ export class TodoService {
     ){}
 
     async fetchTodo(id:string):Promise<Todo>{
+        let todo:TodoDocument;
         try{
-            let todo:TodoDocument = await this.todoRepository.findOne({_id:id});
-            return {id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete};
+            todo = await this.todoRepository.findOne({_id:id});
         }catch(err){
-            throw err;
+            throw new BadRequestException({success:false,message:"Bad Request"});
         }
+        if(!todo) throw new NotFoundException({success:false,message:"Todo Not Found"});
+        return {id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete};
     }
 
     async fetchTodos(): Promise<Todo[]> {
@@ -44,21 +46,27 @@ export class TodoService {
     }
 
     async deleteTodo(id:string):Promise<boolean>{
+        let response ;
         try{
-            let response = await this.todoRepository.deleteOne({_id:id});
-            return true;
+            response = await this.todoRepository.deleteOne({_id:id});
         }catch(err){
-            throw err;
+            throw new BadRequestException({success:false,message:"Bad Request"});
         }
+        if(!response.deletedCount) throw new NotFoundException({success:false,message:"Todo Not Found"});
+        return true;
+        
     }
 
     async updateTodo(id:string,updateTodoDto:Partial<TodoDocument>):Promise<Todo>{
+        let response:TodoDocument ;
         try{
-            let response:TodoDocument = await this.todoRepository.findAndUpdate({_id:id},updateTodoDto);
-            return {id:response._id,title:response.title, description : response.description, isComplete: response.isComplete};
+            response = await this.todoRepository.findAndUpdate({_id:id},updateTodoDto);
         }catch(err){
-            throw err;
+            throw new BadRequestException({success:false,message:"Bad Request"});
         }
+        if(!response) throw new NotFoundException({success:false,message:"Todo Not Found"});
+        return {id:response._id,title:response.title, description : response.description, isComplete: response.isComplete};
+        
     }
 
 }

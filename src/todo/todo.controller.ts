@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get ,Param,Patch,Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get ,NotFoundException,Param,Patch,Post } from "@nestjs/common";
 
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
@@ -15,13 +15,8 @@ export class TodoController{
         @Param("id") id:string,
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
-        try{
-            let todo:Todo = await this.todoService.fetchTodo(id);
-            payload = {success:true,data:todo,message:"Todo Found"};
-        }catch(err){
-            console.log(err);
-            payload = {success:false,data:null,message:"Server Error"}
-        }
+        let todo:Todo = await this.todoService.fetchTodo(id);
+        payload = {success:true,data:todo,message:"Todo Found"};
         return payload;
     }
 
@@ -68,13 +63,8 @@ export class TodoController{
         @Param("id") id:string,
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
-        try{
-            let response:boolean = await this.todoService.deleteTodo(id);
-            payload = {success:true,data:null,message:"Todo Deleted"};
-        }catch(err){
-            console.log(err);
-            payload = {success:false,data:null,message:"Failed to delete todo"};
-        }
+        let response:boolean = await this.todoService.deleteTodo(id);
+        payload = {success:true,data:null,message:"Todo Deleted"};
         return payload;
     }
 
@@ -84,13 +74,8 @@ export class TodoController{
         @Body() updateTodoDto : UpdateTodoDto
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
-        try{
-            let response:Todo = await this.todoService.updateTodo(id,updateTodoDto);
-            payload = {success:true,data:response,message:"Update Successful"}
-        }catch(err){
-            console.log(err);
-            payload = {success:false,data:null,message:"Failed to update todo"};
-        }
+        let response:Todo = await this.todoService.updateTodo(id,updateTodoDto);
+        payload = {success:true,data:response,message:"Update Successful"}
         return payload;
     }
 

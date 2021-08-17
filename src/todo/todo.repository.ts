@@ -28,7 +28,7 @@ export class TodoRepository{
     }
 
     async findAndUpdate(todoFilterQuery:FilterQuery<TodoDocument>,todo:Partial<TodoDocument>){
-        return this.todoModel.findOneAndUpdate(todoFilterQuery,todo,{new:true});
+        return this.todoModel.findOneAndUpdate(todoFilterQuery,todo,{new:true,useFindAndModify:false});
     }
 
 }
