@@ -9,6 +9,5 @@ import { TodoModel,TodoSchema } from './schemas/todo.schema';
   imports: [MongooseModule.forFeature([{name:TodoModel.name,schema:TodoSchema}])],
   controllers: [TodoController],
   providers: [TodoService,TodoRepository],
-  exports:[TodoService]
 })
 export class TodoModule {}
