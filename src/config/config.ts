@@ -1,5 +1,5 @@
-const config = {
+const serverConfig = {
     "PORT" : 8000,
 }
 
-export default config;
+export default serverConfig;
