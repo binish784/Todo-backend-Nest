@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get ,Param,Patch,Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get ,Param,Patch,Post } from "@nestjs/common";
+
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
-import { TodoDocument } from "./schemas/todo.schema";
+import { Todo } from "./entities/Todo.entity";
 import { TodoService } from "./todo.service";
 
 @Controller("todo")
@@ -15,7 +16,7 @@ export class TodoController{
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
-            let todo = await this.todoService.fetchTodo(id);
+            let todo:Todo = await this.todoService.fetchTodo(id);
             payload = {success:true,data:todo,message:"Todo Found"};
         }catch(err){
             console.log(err);
@@ -28,7 +29,7 @@ export class TodoController{
     async getAll():Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
-            let todos= await this.todoService.fetchTodos();
+            let todos:Todo[] = await this.todoService.fetchTodos();
             let message:string = todos.length ? "Todos Listed" : "Todos Empty";
             payload = {success:true,data:todos,message};
             return payload;
@@ -48,7 +49,7 @@ export class TodoController{
             
             if(!createTodoDto.title) throw Error("Title is required");
             
-            let todo = await this.todoService.createTodo(
+            let todo:Todo = await this.todoService.createTodo(
                 createTodoDto.title,
                 createTodoDto.description,
                 createTodoDto.isComplete
@@ -68,7 +69,7 @@ export class TodoController{
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
-            let response = await this.todoService.deleteTodo(id);
+            let response:boolean = await this.todoService.deleteTodo(id);
             payload = {success:true,data:null,message:"Todo Deleted"};
         }catch(err){
             console.log(err);
@@ -84,8 +85,8 @@ export class TodoController{
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
-            let response:TodoDocument = await this.todoService.updateTodo(id,updateTodoDto);
-            payload = {success:true,data:null,message:"Update Successful"}
+            let response:Todo = await this.todoService.updateTodo(id,updateTodoDto);
+            payload = {success:true,data:response,message:"Update Successful"}
         }catch(err){
             console.log(err);
             payload = {success:false,data:null,message:"Failed to update todo"};

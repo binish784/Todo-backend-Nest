@@ -6,6 +6,7 @@ import { TodoController } from "../todo.controller";
 import { TodoService } from "../todo.service";
 import { TodoRepository } from "../todo.repository";
 import { ApiResponse } from "src/types/response.type";
+import { getTodoDummy } from "./data/user.data";
 
 jest.mock('../todo.service');
 
@@ -24,9 +25,11 @@ describe('TodoController', () => {
       todoService = app.get<TodoService>(TodoService);
       jest.clearAllMocks();
     });
-  
+    
+
+    // testing get todos
     describe('getTodos', () => {
-      describe('when get todos is called', ()=>{
+      describe('when getTodos is called', ()=>{
 
         let response:ApiResponse;
 
@@ -35,12 +38,26 @@ describe('TodoController', () => {
         })
   
         test('then it should call todoService',()=>{
-          expect(todoService.fetchTodos).toBeCalledWith()
-        })
-
-      
+          expect(todoService.fetchTodos);
+        })      
       })
 
     });
+
+    // testing get single todo
+    describe("getTodo",()=>{
+      describe("when getTodo is called", ()=>{
+        let response:ApiResponse;
+
+        beforeEach(async()=>{
+          response = await todoController.getOne(getTodoDummy()._id);
+        })
+
+        test("then it should call todoService",()=>{
+          expect(todoService.fetchTodo).toBeCalledWith(getTodoDummy()._id);
+        })
+      })    
+    })
+
 });
   
