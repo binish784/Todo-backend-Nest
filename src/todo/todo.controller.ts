@@ -1,4 +1,6 @@
 import { Body, Controller, Delete, Get ,NotFoundException,Param,Patch,Post } from "@nestjs/common";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
@@ -6,6 +8,7 @@ import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { Todo } from "./entities/Todo.entity";
 import { TodoService } from "./todo.service";
 
+@ApiTags("Todo")
 @Controller("todo")
 export class TodoController{
     constructor(private readonly todoService:TodoService){};
