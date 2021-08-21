@@ -31,14 +31,14 @@ export class TodoService {
         }
     }
 
-    async createTodo(title:string, description:string, isComplete:boolean):Promise<Todo>{
+    async createTodo(title:string, description:string, isComplete:boolean, userId:string ):Promise<Todo>{
         try{
-            let todo = await this.todoRepository.create({title,description,isComplete});
+            let todo = await this.todoRepository.create({title,description,isComplete,userId});
             return {
                 id:todo.id,
                 title:todo.title,
                 description:todo.description,
-                isComplete:todo.isComplete
+                isComplete:todo.isComplete,
             };   
         }catch(err){
             throw err;

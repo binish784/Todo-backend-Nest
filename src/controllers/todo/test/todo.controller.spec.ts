@@ -1,4 +1,4 @@
-import dbConfig from "../../config/database";
+import dbConfig from "../../../config/database";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Test,TestingModule } from "@nestjs/testing";
 import { TodoDocument, TodoModel, TodoSchema } from "../schemas/todo.schema";

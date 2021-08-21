@@ -1,18 +1,19 @@
-import { Body, Controller, Delete, Get ,NotFoundException,Param,Patch,Post } from "@nestjs/common";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-
+import { Body, Controller, Delete, Get,Param,Patch,Post, Request, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { Public } from "../../decorators/public.decorator";
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
 import { Todo } from "./entities/Todo.entity";
 import { TodoService } from "./todo.service";
+import { JwtAuthGuard } from "src/guards/jwt-authGuards";
 
 @ApiTags("Todo")
 @Controller("todo")
 export class TodoController{
     constructor(private readonly todoService:TodoService){};
 
+    @UseGuards(JwtAuthGuard)
     @Get(":id")
     async getOne(
         @Param("id") id:string,
@@ -23,8 +24,12 @@ export class TodoController{
         return payload;
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
-    async getAll():Promise<ApiResponse>{
+    async getAll(
+        @Request() req
+    ):Promise<ApiResponse>{
+        console.log(req.user);
         let payload:ApiResponse;
         try{
             let todos:Todo[] = await this.todoService.fetchTodos();
@@ -38,9 +43,11 @@ export class TodoController{
         }
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post()
     async create(
-        @Body() createTodoDto: CreateTodoDto
+        @Body() createTodoDto: CreateTodoDto,
+        @Request() req
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
         try{
@@ -50,7 +57,8 @@ export class TodoController{
             let todo:Todo = await this.todoService.createTodo(
                 createTodoDto.title,
                 createTodoDto.description,
-                createTodoDto.isComplete
+                createTodoDto.isComplete,
+                req.user.id
             );
             payload = {success:true, data:todo, message:"Todo Created"};
         }catch(err){
@@ -61,6 +69,7 @@ export class TodoController{
         return payload;
     }    
     
+    @UseGuards(JwtAuthGuard)
     @Delete(":id")
     async delete(
         @Param("id") id:string,
@@ -71,6 +80,7 @@ export class TodoController{
         return payload;
     }
 
+    @UseGuards(JwtAuthGuard)
     @Patch(":id")
     async update(
         @Param("id") id:string,

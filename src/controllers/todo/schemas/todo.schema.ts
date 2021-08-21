@@ -13,6 +13,10 @@ export class TodoModel {
 
   @Prop()
   isComplete: boolean;
+
+  @Prop()
+  userId: string;
+
 }
 
 export const TodoSchema = SchemaFactory.createForClass(TodoModel);

@@ -1,4 +1,4 @@
-import { TodoModel } from "src/todo/schemas/todo.schema";
+import { TodoModel } from "../../schemas/todo.schema";
 
 export const getTodoDummy = () =>{
     let todoDummy = {

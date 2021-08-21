@@ -20,4 +20,9 @@ export class CreateTodoDto{
     @IsBoolean()
     isComplete:boolean;
 
+    @ApiProperty({required:true})
+    @IsNotEmpty()
+    @IsString()
+    userId:string;
+
 }
