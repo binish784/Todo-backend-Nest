@@ -1,6 +1,6 @@
 const jwtConfig = {
     secret : "jwtSecretasdzxc34",
-    tokenExpiry : "60s"
+    tokenExpiry : "2hr"
 }
 
 export default jwtConfig;

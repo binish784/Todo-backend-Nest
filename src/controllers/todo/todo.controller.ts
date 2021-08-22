@@ -17,9 +17,11 @@ export class TodoController{
     @Get(":id")
     async getOne(
         @Param("id") id:string,
+        @Request() req
     ):Promise<ApiResponse>{
         let payload:ApiResponse;
-        let todo:Todo = await this.todoService.fetchTodo(id);
+        let userId = req.user.id;
+        let todo:Todo = await this.todoService.fetchTodo(id,userId);
         payload = {success:true,data:todo,message:"Todo Found"};
         return payload;
     }
@@ -29,10 +31,10 @@ export class TodoController{
     async getAll(
         @Request() req
     ):Promise<ApiResponse>{
-        console.log(req.user);
         let payload:ApiResponse;
         try{
-            let todos:Todo[] = await this.todoService.fetchTodos();
+            let userId:string = req.user.id;
+            let todos:Todo[] = await this.todoService.fetchTodosByUser(userId);
             let message:string = todos.length ? "Todos Listed" : "Todos Empty";
             payload = {success:true,data:todos,message};
             return payload;

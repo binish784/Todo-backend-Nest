@@ -26,7 +26,7 @@ export class UsersService {
     async findByUsername(username:string, showPassword = false):Promise<User>{
         let filterQuery:FilterQuery<UserDocument> = {username};
         let userResponse = await this.userRepository.findOne(filterQuery);
-        let targetUser;
+        let targetUser = null;
         if(userResponse){
             targetUser = { id : userResponse.id, username:userResponse.username };
             if(showPassword) targetUser.password = userResponse.password;
@@ -43,5 +43,6 @@ export class UsersService {
         }
         return targetUser;
     }
+
 
 }

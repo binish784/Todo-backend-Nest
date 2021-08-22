@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable,  NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable,  NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { TodoRepository } from './todo.repository';
 import { TodoModel, TodoDocument } from './schemas/todo.schema';
 import { Todo } from './entities/Todo.entity';
@@ -10,10 +10,11 @@ export class TodoService {
         private readonly todoRepository: TodoRepository
     ){}
 
-    async fetchTodo(id:string):Promise<Todo>{
+    async fetchTodo(id:string,userId:string):Promise<Todo>{
         let todo:TodoDocument;
         try{
-            todo = await this.todoRepository.findOne({_id:id});
+            todo = await this.todoRepository.findOne({_id:id,userId});
+            if(userId!=todo.userId) throw new UnauthorizedException({success:false,message:"Unauthorized"});
         }catch(err){
             throw new BadRequestException({success:false,message:"Bad Request"});
         }
@@ -24,6 +25,16 @@ export class TodoService {
     async fetchTodos(): Promise<Todo[]> {
         try{
             let todos:TodoDocument[] = await this.todoRepository.find({});
+            let response:Todo[] = todos.map((todo:TodoDocument)=><Todo>{id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete});
+            return response;
+        }catch(err){
+            throw err;
+        }
+    }
+
+    async fetchTodosByUser(userId:string):Promise<Todo[]> {
+        try{
+            let todos:TodoDocument[] = await this.todoRepository.find({userId:userId});
             let response:Todo[] = todos.map((todo:TodoDocument)=><Todo>{id:todo._id,title:todo.title,description:todo.description,isComplete:todo.isComplete});
             return response;
         }catch(err){
