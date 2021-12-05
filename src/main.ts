@@ -12,6 +12,13 @@ async function bootstrap() {
     .setTitle('Todo - Example')
     .setDescription('A Demo CRUD Rest Api for an todo application using NestJS')
     .setVersion('1.0')
+    .addBearerAuth({
+      in:"header",
+      name:"JWT_AUTH",
+      type: 'http', 
+      scheme: 'bearer', 
+      bearerFormat: 'JWT', 
+    },'JWT_AUTH')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

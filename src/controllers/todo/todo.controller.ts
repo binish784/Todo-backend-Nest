@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get,Param,Patch,Post, Request, UseGuards } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Public } from "../../decorators/public.decorator";
 import { ApiResponse } from "src/types/response.type";
 import { CreateTodoDto } from "./dto/create-todo.dto";
@@ -9,10 +9,11 @@ import { TodoService } from "./todo.service";
 import { JwtAuthGuard } from "src/guards/jwt-authGuards";
 
 @ApiTags("Todo")
+@ApiBearerAuth('JWT_AUTH')    
 @Controller("todo")
 export class TodoController{
     constructor(private readonly todoService:TodoService){};
-
+    
     @UseGuards(JwtAuthGuard)
     @Get(":id")
     async getOne(
